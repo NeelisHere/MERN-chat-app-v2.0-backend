@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken")
 const UserModel = require("../models/user-model")
 const { ErrorHandler } = require("./error-middleware")
+const colors = require("colors")
 
 const protected = async (req, res, next) => {
     if (
@@ -11,6 +12,7 @@ const protected = async (req, res, next) => {
             const token = req.headers.authorization.split(' ')[1]
             const decodedToken = jwt.verify(token, process.env.JWT_SECRET)
             req.user = await UserModel.findById(decodedToken.id).select('-password')
+            console.log('auth middleware passed...'.blue)
             next()
         } catch (error) {
             next(new ErrorHandler())

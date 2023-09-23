@@ -1,5 +1,11 @@
 const mongoose = require('mongoose')
 
+/*
+No need of receivers, we know the sender & the chatId.
+Everybody else would be reciever. That way we don't 
+have to create an array of receivers.
+*/
+
 const schema = {
     sender: {
         type: mongoose.Schema.Types.ObjectId,
