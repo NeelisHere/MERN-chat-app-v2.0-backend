@@ -6,6 +6,7 @@ class ChatController {
     async accessChat(req, res, next) {
         // get a chat/create a chat if not present (not a group chat)
         const { userId } = req.body
+        // id of the target-user
         if (!userId) {
             next(new ErrorHandler('Invalid user', 400))
         }
