@@ -147,6 +147,18 @@ class ChatController {
             next(new ErrorHandler('Error renaming chat', 400))
         }
     }
+
+    async editGroupPhoto(req, res, next) {
+        const { chatId, photo } = req.body
+        try {
+            const groupChat = await ChatModel.findById(chatId)
+            groupChat.photo = photo
+            groupChat.save()
+            res.json({ success: true, updatedChat: groupChat })
+        } catch (error) {
+            next(new ErrorHandler())
+        }
+    }
 }
 
-module.exports = new ChatController();
+module.exports = new ChatController()

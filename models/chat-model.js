@@ -22,7 +22,11 @@ const schema = {
     groupAdmin:{
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
-    }
+    },
+    photo:{
+        type: String,
+        default: null
+    },
 }
 
 const chatSchema = new mongoose.Schema(schema, { timestamps: true })

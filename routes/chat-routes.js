@@ -14,6 +14,7 @@ router.route('/group/create').post(protected, chatController.createGroup)
 router.route('/group/rename-chat').put(protected, chatController.renameGroup)
 router.route('/group/remove-user').put(protected, chatController.removeUserFromGroup)
 router.route('/group/add-user').put(protected, chatController.addUserToGroup)
+router.route('/group/edit-photo').put(protected, chatController.editGroupPhoto)
 
 module.exports = router
 

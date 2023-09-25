@@ -14,5 +14,5 @@ router.post('/register', userController.register)
 router.get('/', protected, userController.searchUsers)
 router.get('/me', protected, userController.getMyProfile)
 router.get('/:userId', protected, userController.getUserProfile)
-
+router.put('/:userId', protected, userController.updateProfile)
 module.exports = router

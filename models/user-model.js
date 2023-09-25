@@ -16,8 +16,7 @@ const schema = {
         required: true
     },
     avatar:{
-        type: String,
-        default: 'https://icon-library.com/images/141782.svg.svg'
+        type: String
     },
     backgroundImage: {
         type: String,

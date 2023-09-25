@@ -77,6 +77,26 @@ class UserController {
             me: req.user
         })
     }
+
+    async updateProfile(req, res, next) {
+        const { userId } = req.params
+        const { username, email, avatar } = req.body
+        try {
+            // const data = { username, email, avatar }
+            const user = await UserModel.findById(userId)
+            user.username = username
+            user.email = email
+            user.avatar = avatar
+            user.save()
+            return res.json({
+                success: true,
+                updatedProfile: user
+            })
+        } catch (error) {
+            next(new ErrorHandler(error.message, 400))
+        }
+    }
+
 }
 
 module.exports = new UserController()
