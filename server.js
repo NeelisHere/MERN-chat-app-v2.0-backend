@@ -4,6 +4,7 @@ const connectDB = require('./db.js');
 const cors = require('cors');
 const userRouter = require('./routes/user-routes.js');
 const chatRouter = require('./routes/chat-routes.js')
+const messageRouter = require('./routes/message-routes.js')
 require('dotenv').config();
 const { errorMiddleware } = require('./middlewares/error-middleware.js')
 
@@ -21,6 +22,7 @@ app.use(cors({
 app.use(express.json());
 app.use('/api/v2/users', userRouter)
 app.use('/api/v2/chats', chatRouter)
+app.use('/api/v2/messages', messageRouter)
 
 app.use(errorMiddleware)
 
