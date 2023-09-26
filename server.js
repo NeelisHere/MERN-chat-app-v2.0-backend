@@ -33,7 +33,56 @@ app.get('/', (req, res) => {
 })
 
 //========================== listen =============================
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
     console.log(`Server running at: http://localhost:${PORT}`)
 })
 
+
+const io = require('socket.io')(server, {
+    pingTimeout: 60000,
+    cors: {
+        origin: 'http://localhost:3000'
+    }
+})
+
+io.on('connection', (socket) => {
+    console.log('connected to socket.io')
+
+    socket.on('JOIN_ROOM_REQ', (userData) => {
+        // console.log(userData)
+        socket.join(userData._id) // user joins a personal-room with id=userId
+        socket.emit('JOIN_ROOM_RES', {
+            socketId: socket.id,
+            roomId: userData._id
+        })
+    })
+
+    socket.on('JOIN_CHAT_REQ', ({ roomId }) => {
+        socket.join(roomId) // user joins a common room, roomID == chatId
+        console.log(`User joined room: ${roomId}`)
+        socket.emit('JOIN_CHAT_RES', { 
+            success: true,
+            chatId: roomId,
+            users: Array.from(io.sockets.adapter.rooms.get(roomId) || [])
+        })
+    })
+
+    socket.on('NEW_MESSAGE_REQ', ({ roomId, message }) => {
+        // console.log(`New message: ${message}`)
+        const clients = Array.from(io.sockets.adapter.rooms.get(roomId) || [])
+        clients.forEach((clientId) => {
+            io.to(clientId).emit('NEW_MESSAGE_RES', {
+                chatId: roomId,
+                message
+            })
+        })
+    })
+
+    socket.on("disconnect", (reason) => {
+        // const targetEmail = emailToSocketMapping[socket.id]
+        // const targetSID = socketToEmailMapping[targetEmail]
+        // delete emailToSocketMapping[targetEmail]
+        // delete socketToEmailMapping[targetSID]
+        console.log('Disconnected user: ', socket.id)
+    });
+})

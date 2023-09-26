@@ -153,7 +153,7 @@ class ChatController {
         try {
             const groupChat = await ChatModel.findById(chatId)
             groupChat.photo = photo
-            groupChat.save()
+            await groupChat.save()
             res.json({ success: true, updatedChat: groupChat })
         } catch (error) {
             next(new ErrorHandler())
