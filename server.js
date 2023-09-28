@@ -45,15 +45,26 @@ const io = require('socket.io')(server, {
     }
 })
 
+const userToSocketMap = {}
+
+const getUserIdFromSocketId = (socketId) => {
+    const socketIds = Object.values(userToSocketMap)
+    const userIds = Object.keys(userToSocketMap)
+    const index = socketIds.indexOf(socketId)
+    return userIds[index]
+}
+
 io.on('connection', (socket) => {
     console.log('connected to socket.io')
+    // console.log(Array.from(io.sockets.adapter.rooms || []))
 
-    socket.on('JOIN_ROOM_REQ', (userData) => {
+    socket.on('JOIN_ROOM_REQ', (user) => {
         // console.log(userData)
-        socket.join(userData._id) // user joins a personal-room with id=userId
+        userToSocketMap[user._id] = socket.id
+        socket.join(user._id) // user joins a personal-room with id=userId
         socket.emit('JOIN_ROOM_RES', {
             socketId: socket.id,
-            roomId: userData._id
+            roomId: user._id
         })
     })
 
@@ -63,26 +74,32 @@ io.on('connection', (socket) => {
         socket.emit('JOIN_CHAT_RES', { 
             success: true,
             chatId: roomId,
-            users: Array.from(io.sockets.adapter.rooms.get(roomId) || [])
         })
     })
 
-    socket.on('NEW_MESSAGE_REQ', ({ roomId, message }) => {
-        // console.log(`New message: ${message}`)
-        const clients = Array.from(io.sockets.adapter.rooms.get(roomId) || [])
-        clients.forEach((clientId) => {
-            io.to(clientId).emit('NEW_MESSAGE_RES', {
-                chatId: roomId,
-                message
+    socket.on('NEW_MESSAGE_REQ', ({ message, chat }) => {
+        chat.users.forEach((user) => {
+            const socketId = userToSocketMap[user._id]
+            io.to(socketId).emit('NEW_MESSAGE_RES', {
+                message,
+                chat
             })
+        })
+    })
+    
+    socket.on('NOTIFY_REQ', ({ sender, receiver, chat }) => {
+        console.log('notify req from:', receiver._id)
+        io.to(userToSocketMap[receiver._id]).emit('NOTIFY_RES', { 
+            // sender and reciever of the original message
+            sender,
+            receiver,
+            chat
         })
     })
 
     socket.on("disconnect", (reason) => {
-        // const targetEmail = emailToSocketMapping[socket.id]
-        // const targetSID = socketToEmailMapping[targetEmail]
-        // delete emailToSocketMapping[targetEmail]
-        // delete socketToEmailMapping[targetSID]
+        const userId = getUserIdFromSocketId(socket.id)
+        delete userToSocketMap[userId]
         console.log('Disconnected user: ', socket.id)
     });
 })
