@@ -49,6 +49,21 @@ class MessageController {
         }
     }
 
+    async editMessages(req, res, next) {
+        const { messageId, updatedContent } = req.body
+        try {
+            const targetMessage = await MessageModel.findById(messageId)
+            targetMessage.content = updatedContent
+            await targetMessage.save()
+            res.json({
+                success: true,
+                updatedMessage: targetMessage
+            })
+        } catch (error) {
+            next(new ErrorHandler())
+        }
+    }
+
     async deleteMessages(req, res, next) {}
 }
 

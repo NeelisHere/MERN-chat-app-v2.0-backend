@@ -13,6 +13,7 @@ router.route('/test').post(protected, (req, res) => {
 
 router.route('/').post(protected, messageController.sendMessage)
 router.route('/:chatId').get(protected, messageController.allMessages)
+router.route('/edit').put(protected, messageController.editMessages)
 router.route('/delete').delete(protected, messageController.deleteMessages)
 
 module.exports = router
