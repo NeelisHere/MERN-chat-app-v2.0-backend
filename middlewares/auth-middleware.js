@@ -5,6 +5,7 @@ const colors = require("colors")
 
 const protected = async (req, res, next) => {
     console.log('auth middleware entered...'.blue)
+    // console.log(req.body)
     if (
         req.headers.authorization && 
         req.headers.authorization.startsWith('Bearer')

@@ -18,7 +18,13 @@ const schema = {
     chat: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Chat"
-    }
+    },
+    deleteFor: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User"
+        }
+    ]
 }
 
 const messageSchema = new mongoose.Schema(schema, { timestamps: true })

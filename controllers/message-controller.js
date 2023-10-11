@@ -64,7 +64,22 @@ class MessageController {
         }
     }
 
-    async deleteMessages(req, res, next) {}
+    async deleteMessages(req, res, next) {
+        const { messageId, deleteOption } = req.body
+        try {
+            if (deleteOption === '0') {
+                await MessageModel.findOneAndUpdate(
+                    { _id: messageId },
+                    { $push: { deleteFor: req.user._id } }
+                )
+            } else {
+                await MessageModel.findByIdAndDelete(messageId)
+            }
+            res.json({ success: true })
+        } catch (error) {
+            next(new ErrorHandler())
+        }
+    }
 }
 
 module.exports = new MessageController();

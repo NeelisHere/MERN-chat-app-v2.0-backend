@@ -56,10 +56,9 @@ const getUserIdFromSocketId = (socketId) => {
 
 io.on('connection', (socket) => {
     console.log('connected to socket.io')
-    // console.log(Array.from(io.sockets.adapter.rooms || []))
 
     socket.on('JOIN_ROOM_REQ', (user) => {
-        // console.log(userData)
+        // console.log('JOIN_ROOM_REQ', user)
         userToSocketMap[user._id] = socket.id
         socket.join(user._id) // user joins a personal-room with id=userId
         socket.emit('JOIN_ROOM_RES', {
@@ -69,6 +68,7 @@ io.on('connection', (socket) => {
     })
 
     socket.on('JOIN_CHAT_REQ', ({ roomId }) => {
+        // console.log('JOIN_CHAT_REQ', roomId)
         socket.join(roomId) // user joins a common room, roomID == chatId
         console.log(`User joined room: ${roomId}`)
         socket.emit('JOIN_CHAT_RES', { 
@@ -78,6 +78,7 @@ io.on('connection', (socket) => {
     })
 
     socket.on('NEW_MESSAGE_REQ', ({ message, chat }) => {
+        // console.log('NEW_MESSAGE_REQ',message)
         chat.users.forEach((user) => {
             const socketId = userToSocketMap[user._id]
             io.to(socketId).emit('NEW_MESSAGE_RES', {
@@ -88,7 +89,7 @@ io.on('connection', (socket) => {
     })
     
     socket.on('NOTIFY_REQ', ({ sender, receiver, chat }) => {
-        console.log('notify req from:', receiver._id)
+        // console.log('notify req from:', receiver._id)
         io.to(userToSocketMap[receiver._id]).emit('NOTIFY_RES', { 
             // sender and reciever of the original message
             sender,
