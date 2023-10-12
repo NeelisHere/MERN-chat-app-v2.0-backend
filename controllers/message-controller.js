@@ -5,13 +5,14 @@ const UserModel = require("../models/user-model");
 
 class MessageController {
     async sendMessage(req, res, next) {
-        const { content, chatId } = req.body
+        const { content, chatId, type } = req.body
         if (!content || !chatId) {
             next(new ErrorHandler('Invalid data passed!', 400))
         }
         const messagePayload = {
             sender: req.user._id,
-            content,
+            content, 
+            type,
             chat: chatId,
         }
         try {

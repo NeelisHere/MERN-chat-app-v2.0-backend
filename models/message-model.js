@@ -11,6 +11,10 @@ const schema = {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
     },
+    type: {
+        type: String,
+        default: 'text'
+    },
     content: {
         type: String,
         trim: true
