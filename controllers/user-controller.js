@@ -33,12 +33,14 @@ class UserController {
                 next(new Errorhandler('User exists!', 400))
             }
             const hash = await bcrypt.hash(password, 10)
-            const { _doc: user } = await UserModel.create({ username, email, password: hash })
+            const user = await UserModel.create({ username, email, password: hash })
+            const data = {
+                success: true,
+                user: { ...user, token: generateToken(user._id) }
+            }
             if (user) {
-                res.status(201).json({
-                    success: true,
-                    user: { ...user, token: generateToken(user._id) }
-                })
+                // console.log('inside register',data)
+                res.status(201).json(data)
             } else {
                 next(new Errorhandler('Failed to create user.', 400))
             }
